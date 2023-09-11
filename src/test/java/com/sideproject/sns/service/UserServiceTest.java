@@ -2,6 +2,7 @@ package com.sideproject.sns.service;
 
 
 import com.sideproject.sns.exception.CustomException;
+import com.sideproject.sns.exception.ErrorCode;
 import com.sideproject.sns.fixture.UserEntityFixture;
 import com.sideproject.sns.model.entity.UserEntity;
 import com.sideproject.sns.repository.UserEntityRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -21,6 +23,9 @@ public class UserServiceTest {
 
     @Autowired
     UserService userService;
+
+    @MockBean
+    BCryptPasswordEncoder encoder;
 
     @MockBean
     UserEntityRepository userEntityRepository;
@@ -35,9 +40,10 @@ public class UserServiceTest {
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
-        when(userEntityRepository.save(any())).thenReturn(Optional.of(userEntity));
+        when(encoder.encode(password)).thenReturn("encrypt_password");
+        when(userEntityRepository.save(any())).thenReturn(userEntity);
 
-        Assertions.assertDoesNotThrow(()-> userService.join(username, password));
+        Assertions.assertDoesNotThrow(() -> userService.join(username, password));
     }
 
     @Test
@@ -50,9 +56,11 @@ public class UserServiceTest {
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
+        when(encoder.encode(password)).thenReturn("encrypt_password");
         when(userEntityRepository.save(any())).thenReturn(Optional.of(userEntity));
 
-        Assertions.assertThrows(CustomException.class, ()-> userService.join(username, password));
+        CustomException ex = Assertions.assertThrows(CustomException.class, () -> userService.join(username, password));
+        Assertions.assertEquals(ErrorCode.DUPLICATED, ex.getErrorCode());
     }
 
     @Test
@@ -60,14 +68,16 @@ public class UserServiceTest {
 
         String username = "username";
         String password = "password";
+        String encodedPassword = "encoded password";
 
         UserEntity userEntity = UserEntityFixture.get(username, password);
 
         //mocking
         // 실제 로직에서는 여기서 나온 결과를 가지고 if(~) 로직이 구현되어 있다. 이를 위해서 fixture를 하나 만들기!
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
+        when(encoder.matches(any(), any())).thenReturn(true);
 
-        Assertions.assertDoesNotThrow(()-> userService.login(username, password));
+        Assertions.assertDoesNotThrow(() -> userService.login(username, password));
     }
 
     @Test
@@ -81,7 +91,8 @@ public class UserServiceTest {
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(CustomException.class, ()-> userService.login(username, password));
+        CustomException ex = Assertions.assertThrows(CustomException.class, () -> userService.login(username, password));
+        Assertions.assertEquals(ErrorCode.NO_DATA, ex.getErrorCode());
     }
 
     @Test
@@ -97,6 +108,7 @@ public class UserServiceTest {
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
 
 
-        Assertions.assertThrows(CustomException.class, ()-> userService.login(username, wrongPassword));
+        CustomException ex = Assertions.assertThrows(CustomException.class, () -> userService.login(username, wrongPassword));
+        Assertions.assertEquals(ErrorCode.INVALID_DATA, ex.getErrorCode());
     }
 }
