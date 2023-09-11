@@ -1,4 +1,4 @@
-package com.sideproject.sns.controller.dto;
+package com.sideproject.sns.controller.request;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserLoginRequestDto {
+public class UserJoinRequestDto {
 
     private String username;
     private String password;
