@@ -9,6 +9,7 @@ import com.sideproject.sns.controller.response.PostMyFeedResponseDto;
 import com.sideproject.sns.controller.response.Response;
 import com.sideproject.sns.model.Post;
 import com.sideproject.sns.service.PostService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,5 +61,10 @@ public class PostController {
     public Response<Void> likePost(@PathVariable Long postId, Authentication authentication) {
         postService.likePost(postId, authentication.getName());
         return Response.success();
+    }
+
+    @GetMapping("{postId}/likes")
+    public Response<Long> countLikeAtPost(@PathVariable Long postId) {
+        return Response.success(postService.countLikeAtPost(postId));
     }
 }

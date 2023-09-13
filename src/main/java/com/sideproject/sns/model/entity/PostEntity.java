@@ -25,7 +25,7 @@ public class PostEntity extends BaseAuditing {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne/*(fetch = FetchType.LAZY)*/
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 

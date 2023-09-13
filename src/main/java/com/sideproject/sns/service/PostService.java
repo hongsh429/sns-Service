@@ -57,6 +57,7 @@ public class PostService {
 
         // post modify
         postEntity.modify(title, content);
+        postEntityRepository.saveAndFlush(postEntity);
 
         return Post.fromEntity(postEntity);
     }
@@ -107,5 +108,13 @@ public class PostService {
 
         // builder 패턴이 필요할까?
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
+    }
+
+    public Long countLikeAtPost(Long postId) {
+        PostEntity postEntity = postEntityRepository.findById(postId).orElseThrow(() ->
+                new CustomException(ErrorCode.NO_DATA, "해당 포스트는 존재하지 않습니다.")
+        );
+
+        return likeEntityRepository.countAllByPost(postEntity);
     }
 }

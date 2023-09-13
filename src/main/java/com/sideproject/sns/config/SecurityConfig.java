@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/api/*/users/login", "/api/*/users/join").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/*/posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/*/posts/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
 
