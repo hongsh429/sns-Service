@@ -13,8 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,7 +49,7 @@ public class UserService {
         );
 
         // 비밀번호 체크
-        if(!encoder.matches(password, userEntity.getPassword())){
+        if (!encoder.matches(password, userEntity.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_DATA, String.format("%s: 비밀번호가 일치하지 않습니다.", password));
         }
 
@@ -59,5 +57,11 @@ public class UserService {
         String token = JwtTokenUtils.generateToken(username, secretKey, expiredTime);
 
         return token;
+    }
+
+    public User loadUserByUsername(String username) {
+        return userEntityRepository.findByUsername(username)
+                .map(User::fromEntity)
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_DATA, String.format("%s: 해당 사용자가 없습니다", username)));
     }
 }

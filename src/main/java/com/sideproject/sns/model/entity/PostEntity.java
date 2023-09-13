@@ -25,8 +25,20 @@ public class PostEntity extends BaseAuditing {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne/*(fetch = FetchType.LAZY)*/
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    public static PostEntity of(String title, String content, UserEntity userEntity) {
+        return PostEntity.builder()
+                .title(title)
+                .content(content)
+                .user(userEntity)
+                .build();
+    }
+
+    public void modify(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

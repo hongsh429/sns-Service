@@ -36,7 +36,7 @@ public class UserServiceTest {
         String username = "username";
         String password = "password";
 
-        UserEntity userEntity = UserEntityFixture.get(username, password);
+        UserEntity userEntity = UserEntityFixture.get(1L, username, password);
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -52,7 +52,7 @@ public class UserServiceTest {
         String username = "username";
         String password = "password";
 
-        UserEntity userEntity = UserEntityFixture.get(username, password);
+        UserEntity userEntity = UserEntityFixture.get(1L, username, password);
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
@@ -70,7 +70,7 @@ public class UserServiceTest {
         String password = "password";
         String encodedPassword = "encoded password";
 
-        UserEntity userEntity = UserEntityFixture.get(username, password);
+        UserEntity userEntity = UserEntityFixture.get(1L, username, password);
 
         //mocking
         // 실제 로직에서는 여기서 나온 결과를 가지고 if(~) 로직이 구현되어 있다. 이를 위해서 fixture를 하나 만들기!
@@ -86,7 +86,7 @@ public class UserServiceTest {
         String username = "username";
         String password = "password";
 
-        UserEntity userEntity = UserEntityFixture.get(username, password);
+        UserEntity userEntity = UserEntityFixture.get(1L, username, password);
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
@@ -102,7 +102,7 @@ public class UserServiceTest {
         String password = "password";
         String wrongPassword = "wrong password";
 
-        UserEntity userEntity = UserEntityFixture.get(username, password);
+        UserEntity userEntity = UserEntityFixture.get(1L, username, password);
 
         //mocking
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(userEntity));
