@@ -5,17 +5,32 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenUtils {
+
+    public static String takeUsername(String token, String key) {
+       return extractClaims(token, key).get("username", String.class);
+    }
+
+    public static boolean isExpired(String token, String key) {
+        Date expiration = extractClaims(token, key).getExpiration();
+        return expiration.before(new Date());
+    }
+
+    private static Claims extractClaims(String token, String key) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey(key))
+                .build()
+                .parseClaimsJws(token).getBody();
+    }
 
     public static String generateToken(String username, String key, long expiredTimeMs) {
         Claims claims = Jwts.claims();
